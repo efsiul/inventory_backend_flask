@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0  
+    restart: unless-stopped  
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql 
+    ports:
+      - "3306:3306"  
+
+  flask-app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+    # Command to run Alembic migrations and start the Flask app
+    # command: bash -c "python routes.py & sleep 5 && alembic revision --autogenerate -m 'Initial migration' && alembic upgrade head && flask run --host=0.0.0.0"
+    command: bash -c "alembic revision --autogenerate -m 'Initial migration' && alembic upgrade head && sleep 20 && flask run --host=0.0.0.0"
+
+volumes:
+  mysql-data:
