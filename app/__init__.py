@@ -14,7 +14,7 @@ app.config.from_object(Config)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.template_folder = str(Path(__file__).resolve().parent.parent / 'templates')
 
-app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(api, url_prefix='/')
 
 def create_tables() -> None:
     Base.metadata.create_all(bind=engine)     # type: ignore

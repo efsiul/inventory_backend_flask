@@ -16,5 +16,9 @@ COPY . /app/
 # Expose port 5000
 EXPOSE 5000
 
-# Command to run the application
-CMD ["python", "routes.py"]
+# # Copy the entrypoint script
+# COPY entrypoint.sh /usr/local/bin/
+# RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# # Command to run the application
+# CMD ["entrypoint.sh"]

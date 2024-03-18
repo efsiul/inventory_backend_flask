@@ -1,8 +1,7 @@
 import traceback
-from typing import Any
-from flask                              import Blueprint, redirect, request, url_for
+from typing                             import Any
+from flask                              import Blueprint, request
 from app.controllers.item_controller    import ItemController
-from app.entities.item_entity import Item
 from app.services.item_service          import ItemService
 from app.repositories.item_repository   import ItemRepository
 from app.db                             import get_db
@@ -15,14 +14,14 @@ item_service    = ItemService(item_repository)
 item_controller = ItemController(item_service)
 
 
-@api.route('/add', methods=['GET', 'POST'])
+@api.route('add', methods=['GET', 'POST'])
 def create_item()-> Any:                    
     if request.method == 'POST':
         return item_controller.post(request.form)
     else:
         return render_template('add_item.html')
 
-@api.route('/get/<int:id>', methods=['GET'])
+@api.route('get/<int:id>', methods=['GET'])
 def get_item(id: int) -> Any:
     item = item_controller.get(id)
     return render_template('detail_item.html', item=item)
@@ -35,7 +34,7 @@ def get_all_items() -> Any:
 
 
 
-@api.route('/edit/<int:id>', methods=['GET', 'POST', 'PUT'])
+@api.route('edit/<int:id>', methods=['GET', 'POST', 'PUT'])
 def update_item(id: int) -> Any:                            
 
     if request.method == 'GET':
@@ -64,6 +63,6 @@ def update_item(id: int) -> Any:
         return "Method Not Allowed", 405
 
 
-@api.route('/delete/<int:id>', methods=['DELETE'])
+@api.route('delete/<int:id>', methods=['DELETE'])
 def delete_item(id: int) -> Any:
     return item_controller.delete(id)

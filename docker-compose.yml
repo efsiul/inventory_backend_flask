@@ -19,7 +19,8 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -29,7 +30,7 @@ services:
 
     # Command to run Alembic migrations and start the Flask app
     # command: bash -c "python routes.py & sleep 5 && alembic revision --autogenerate -m 'Initial migration' && alembic upgrade head && flask run --host=0.0.0.0"
-    command: bash -c "alembic revision --autogenerate -m 'Initial migration' && alembic upgrade head && sleep 20 && flask run --host=0.0.0.0"
+    command: bash -c "flask run --host=0.0.0.0"
 
 volumes:
   mysql-data:

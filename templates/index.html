@@ -55,7 +55,7 @@
                 const confirmation = confirm(`Are you sure you want to delete item ${itemId}?`);
 
                 if (confirmation) {
-                    const response = await fetch(`/api/delete/${itemId}`, {
+                    const response = await fetch(`delete/${itemId}`, {
                         method: 'DELETE',
                     });
 

@@ -13,7 +13,6 @@ Contains the configurations to run inside a docker container next to a MySQL dat
 The following tools are required to test the project:
     - Have Docker installed
     - Have Docker-compose installed
-    - Have Postman or another tool installed to verify enpoints
 
 ## Architecture: The application has a layered architecture. They are
 
@@ -37,42 +36,30 @@ Wait for about a minute, then you can see two containers running with the comman
     ```bash
     docker ps -a
     ```
+You need to look at the container number and run the following command
+
+     ```bash
+     docker start [flask_container]
+     ```
 
 ## Endpoints
 
-- POST: <http://127.0.0.1:5000/api/products>
+- GET_ALL: <http://172.23.0.3:5000/>
 
-To add data with this crud make sure it has the following structure:
+This endpoint will take you to the home page, where the list of items saved in the database and options to add, delete, edit, or view details will be displayed.
 
-    ```json
-    {
-        "name": "Scalpel",
-        "price": 2.34,
-        "description": "cutting cutter",
-        "quantity":32
-    }
-    ```
+- POST: <http://172.23.0.3:5000/add>
 
-- GET_BY_ID: <http://127.0.0.1:5000/api/products/1>
+This page will allow you to add items with their respective characteristics.
 
-Make sure you enter the ID number that corresponds to the product, and that it exists within the database
+- GET_BY_ID: <http://172.23.0.3:5000/1>
 
-- GET_ALL: <http://127.0.0.1:5000/api/products>
+In this endpoint you can see details of a specific item
 
-This endpoint will bring a list with all the objects that are saved in the database
+- PUT: <http://172.23.0.3:5000/edit/1>
+Entpoint that allows updating the attributes of an already created item
 
-- PUT: <http://127.0.0.1:5000/api/products/1>
-Make sure you enter the ID number that corresponds to the product, and that it exists within the database. Additionally, the data you want to change must follow the following structure:
+- DELETE: <http://172.23.0.3:5000/delete/1>
+Endpoint that allows you to delete an item.
 
-    ```json
-    {
-        "name": "Scissors",
-        "price": 3.55,
-        "description": "Office scissors",
-        "quantity": 25,
-    }
-    ```
-
-     - DELETE: <http://127.0.0.1:5000/api/products/1>
-
-Make sure you enter the ID number that corresponds to the product, and that it exists within the database
+---
