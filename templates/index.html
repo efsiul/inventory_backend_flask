@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - Items</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Inventory Items</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Mac_address</th>
+                    <th>Serial_number</th>
+                    <th>Manufacturer</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.mac_address }}</td>
+                    <td>{{ item.serial_number }}</td>
+                    <td>{{ item.manufacturer }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.quantity }}</td>
+
+                    <td>
+                        <a href="get/{{ item.id }}" class="btn btn-info btn-sm">Details</a>
+                        <a href="edit/{{ item.id }}" class="btn btn-primary btn-sm">Edit</a>
+                        <button type="button" class="btn btn-danger btn-sm delete-item" data-id="{{ item.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/add" class="btn btn-success">Add Item</a>
+    </div>
+
+    <script>
+        const deleteButtons = document.querySelectorAll('.delete-item');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                const itemId = button.dataset.id;
+                const confirmation = confirm(`Are you sure you want to delete item ${itemId}?`);
+
+                if (confirmation) {
+                    const response = await fetch(`/api/delete/${itemId}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (response.ok) {
+
+                        window.location.reload();
+                    } else {
+                        console.error('Error deleting item:', await response.text());
+                        alert('Error deleting item!');
+                    }
+                }
+            });
+        });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

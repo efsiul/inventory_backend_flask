@@ -3,17 +3,19 @@ from app.entities.item_entity   import Item
 from app.models.item_model      import ItemModel
 from typing                     import List
 
-
 class ItemRepository:
     def __init__(self, session: Session):
         self.session = session
 
     def create(self, item: Item) -> ItemModel:
         item_model = ItemModel( 
-            name        =item.name,         #type: ignore
-            price       =item.price, 
-            description =item.description, 
-            quantity    =item.quantity
+            name            =item.name,         #type: ignore
+            price           =item.price, 
+            mac_address     =item.mac_address,
+            serial_number   =item.serial_number,
+            manufacturer    =item.manufacturer,
+            description     =item.description, 
+            quantity        =item.quantity
         )
         try:
             self.session.add(item_model)
@@ -34,13 +36,16 @@ class ItemRepository:
     def get_all(self) -> List[ItemModel]:
         return self.session.query(ItemModel).all()
 
-    def update(self, item: Item) -> ItemModel:
-        item_model = self.session.query(ItemModel).filter(ItemModel.id == item.id).first()
+    def update(self, item: Item, id:int) -> ItemModel:
+        item_model = self.session.query(ItemModel).filter(ItemModel.id == id).first()
         if item_model is not None:
-            item_model.name         = item.name         #type: ignore
-            item_model.price        = item.price        #type: ignore
-            item_model.description  = item.description  #type: ignore
-            item_model.quantity     = item.quantity     #type: ignore
+            item_model.name         = item.name             #type: ignore
+            item_model.price        = item.price            #type: ignore
+            item_model.mac_address  = item.mac_address      #type: ignore
+            item_model.serial_number= item.serial_number    #type: ignore
+            item_model.manufacturer = item.manufacturer     #type: ignore
+            item_model.description  = item.description      #type: ignore
+            item_model.quantity     = item.quantity         #type: ignore
             self.session.commit()
             return item_model
         else:

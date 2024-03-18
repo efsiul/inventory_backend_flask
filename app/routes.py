@@ -1,11 +1,12 @@
+import traceback
 from typing import Any
-from flask                              import Blueprint, Flask
+from flask                              import Blueprint, redirect, request, url_for
 from app.controllers.item_controller    import ItemController
+from app.entities.item_entity import Item
 from app.services.item_service          import ItemService
 from app.repositories.item_repository   import ItemRepository
-from app.config                         import Config
-from app.db                             import get_db,  Base, engine
-
+from app.db                             import get_db
+from flask                              import render_template
 
 api             = Blueprint('api', __name__)
 
@@ -14,37 +15,55 @@ item_service    = ItemService(item_repository)
 item_controller = ItemController(item_service)
 
 
-@api.route('/products', methods=['POST'])
-def create_item() -> dict[str, Any]:
-    return item_controller.post()
+@api.route('/add', methods=['GET', 'POST'])
+def create_item()-> Any:                    
+    if request.method == 'POST':
+        return item_controller.post(request.form)
+    else:
+        return render_template('add_item.html')
 
-@api.route('/products/<int:id>', methods=['GET'])
-def get_item(id: int) -> str:
-    return str(item_controller.get(id))
+@api.route('/get/<int:id>', methods=['GET'])
+def get_item(id: int) -> Any:
+    item = item_controller.get(id)
+    return render_template('detail_item.html', item=item)
 
-@api.route('/products', methods=['GET'])
+
+@api.route('/', methods=['GET'])
 def get_all_items() -> Any:
-    return item_controller.get_all()
-
-@api.route('/products/<int:id>', methods=['PUT'])
-def update_item(id: int) -> str:
-    return str(item_controller.put(id))
-
-@api.route('/products/<int:id>', methods=['DELETE'])
-def delete_item(id: int) -> str:
-    return str(item_controller.delete(id))
-
-# app  = Flask(__name__)
-# app.config.from_object(Config)
-# app.register_blueprint(api, url_prefix='/api') 
+    items = item_controller.get_all()
+    return render_template('index.html', items=items)
 
 
 
-# def create_tables() -> None:
-#     Base.metadata.create_all(bind=engine)   # type: ignore
+@api.route('/edit/<int:id>', methods=['GET', 'POST', 'PUT'])
+def update_item(id: int) -> Any:                            
 
-
-# if __name__ == "__main__":
-#     create_tables()
-#     app.run(debug=True)
+    if request.method == 'GET':
+        try:
+            item_ = item_controller.get(id)
+            
+            if item_ is None:
+                return "Item not found", 404
+            
+            return render_template('edit_item.html', item=item_, item_id=id)
+        
+        except Exception as e:
+            print(f"Error retrieving item: {str(e)}")
+            traceback.print_exc() 
+            return "Error retrieving item", 500 
     
+    elif request.method in ['POST', 'PUT']:
+        item_data = dict(request.form.items()) 
+        
+        if not item_data:
+            return "Empty form data submitted", 400
+
+        return item_controller.put(id, item_data)
+
+    else:
+        return "Method Not Allowed", 405
+
+
+@api.route('/delete/<int:id>', methods=['DELETE'])
+def delete_item(id: int) -> Any:
+    return item_controller.delete(id)
